@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragment.HomeFragment">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/etUserFilter"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="15dp"
+        android:hint="Filter">
+
+           <AutoCompleteTextView
+               android:id="@+id/actxtFilter"
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:layout_margin="8dp"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/etUserFilter"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="8dp"
+        android:id="@+id/recyclerViewHome"
+        android:layout_centerHorizontal="true"/>
+    <RelativeLayout
+        android:id="@+id/homeProgressLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ProgressBar
+            android:id="@+id/homeProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
+
+</RelativeLayout>

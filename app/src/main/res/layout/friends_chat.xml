@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="4dp"
+    app:cardCornerRadius="10dp"
+    android:orientation="vertical"
+    android:id="@+id/chatCardView">
+    <LinearLayout
+        android:id="@+id/chatLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="5"
+        >
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_weight="1.5"
+            android:layout_height="match_parent">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardChat"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:cardCornerRadius="25dp"
+                android:layout_centerInParent="true">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/white"
+                    android:scaleType="centerCrop"
+                    android:id="@+id/imgChatProfileImage"/>
+            </androidx.cardview.widget.CardView>
+
+        </RelativeLayout>
+
+
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_weight="3"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/txtChatUserName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="User name"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:textSize="25sp"
+                android:textColor="#272525"/>
+            <TextView
+                android:id="@+id/txtChatLastSeen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtChatUserName"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="4dp"
+                android:maxLines="1"
+                />
+        </RelativeLayout>
+
+<RelativeLayout
+    android:layout_width="0dp"
+    android:layout_weight="0.5"
+    android:layout_height="match_parent">
+    <androidx.cardview.widget.CardView
+        android:id="@+id/imgChatOnlineStatus"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        app:cardCornerRadius="8dp"
+        android:background="#43CC0E"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+    <androidx.cardview.widget.CardView
+        android:id="@+id/imgChatOfflineStatus"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        app:cardCornerRadius="8dp"
+        android:background="#7A7777"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+
+
+</RelativeLayout>
+
+    </LinearLayout>
+
+
+
+</androidx.cardview.widget.CardView>
