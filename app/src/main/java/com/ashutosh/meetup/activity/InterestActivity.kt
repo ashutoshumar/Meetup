@@ -335,6 +335,7 @@ class InterestActivity : AppCompatActivity() {
         }
        binding.btnNext.setOnClickListener {
            startActivity(Intent(this,HomeActivity::class.java))
+           finish()
        }
     }
     private fun pickImage() {

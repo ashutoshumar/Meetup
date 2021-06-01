@@ -34,10 +34,8 @@ class LoginActivity : AppCompatActivity() {
             {
                 btnNext.visibility = View.GONE
                 loginProgressBar.visibility = View.VISIBLE
-//            val userType=intent.getStringExtra("userType")
                 val intent= Intent(this, OtpActivity::class.java)
                 intent.putExtra("mobileNumber", number)
-//            intent.putExtra("studentOrTeacher",userType)
                 startActivity(intent)
                 loginProgressBar.visibility = View.GONE
                 btnNext.visibility= View.VISIBLE

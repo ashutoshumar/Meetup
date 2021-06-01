@@ -84,7 +84,8 @@ class ChatFragment : Fragment() {
                     val userid = snapshot.child("userId").value
                     val user_name = snapshot.child("userName").getValue().toString()
                     val user_pic = snapshot.child("picture").value.toString()
-                    val user = ChatList(userid.toString(), user_name, user_pic, "  ", "offline")
+                    val status=snapshot.child("status").value.toString()
+                    val user = ChatList(userid.toString(), user_name, user_pic, "  ", status)
 
                     for (eachChatList in usersChatList!!) {
                         if ((user.chatUserId)!!.equals(eachChatList.id) && !(user!!.chatUserId).equals(

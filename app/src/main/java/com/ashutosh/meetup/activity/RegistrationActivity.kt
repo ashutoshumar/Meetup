@@ -75,17 +75,7 @@ class RegistrationActivity : AppCompatActivity() {
                     }
 
                 })
-              /*  mDatabase = FirebaseDatabase.getInstance()
-                val users:DatabaseReference = mDatabase.reference.child("USERS")
-                users.addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        val anotherChild1=users.child(userId)
-                        anotherChild1.child("userType").setValue("Student")
-                    }
 
-                    override fun onCancelled(error: DatabaseError) {
-                    }
-                })*/
 
                 startActivity(Intent(this@RegistrationActivity, InterestActivity::class.java))
                 finish()

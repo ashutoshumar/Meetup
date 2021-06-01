@@ -7,5 +7,5 @@ data class ChatList(
     val chatUserName:String,
     val chatProfileImage:String,
     val chatLastSeen:String,
-    val Status:String
+    val status:String
 )

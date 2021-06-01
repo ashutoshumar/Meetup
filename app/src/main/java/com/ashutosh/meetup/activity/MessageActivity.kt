@@ -16,6 +16,7 @@ import com.ashutosh.meetup.R
 import com.ashutosh.meetup.adaptor.ChatAdaptor
 import com.ashutosh.meetup.model.Chat
 import com.ashutosh.meetup.model.HompageContent
+import com.ashutosh.meetup.notification.*
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -25,6 +26,9 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask
 import com.squareup.picasso.Picasso
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MessageActivity : AppCompatActivity() {
     var userIdVisit:String?=""
@@ -39,6 +43,7 @@ class MessageActivity : AppCompatActivity() {
     lateinit var messageRecyclerView: RecyclerView
     var reference: DatabaseReference?=null
     var notify=false
+    var apiService: ApiService?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_message)
@@ -51,7 +56,9 @@ class MessageActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-       intent=intent
+
+        apiService= Clint.Client.getClint("https://fcm.googleapis.com/")!!.create(ApiService::class.java)
+        intent=intent
        userIdVisit=intent.getStringExtra("visit_id")
         firebaseUser= FirebaseAuth.getInstance().currentUser
         txtMessageUserName=findViewById(R.id.txtMessageUserName)
@@ -136,10 +143,87 @@ class MessageActivity : AppCompatActivity() {
             }
 
         }
+        //implement the push notifications using fcm
+
+        // chatListReference.child("id").setValue(firebaseUser!!.uid)
+
+        val userReference=FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser!!.uid)
+        userReference.addValueEventListener(object :ValueEventListener{
+            override fun onCancelled(p0: DatabaseError) {
+
+
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                val user=p0.child("userName").value.toString()
+                var status="offline"
+                if (notify){
+                    val userrReference =
+                        FirebaseDatabase.getInstance().reference.child("Users").child(receiverId!!)
+                    userrReference.addValueEventListener(object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            status = snapshot.child("status").value.toString()
+                            if (status == "offline") {
+
+                                sendNotification(receiverId, user, message)
+                            }
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            TODO("Not yet implemented")
+                        }
+
+                    })
+
+
+                }
+                notify=false
+            }
+
+        })
+
 
 
     }
+    private fun sendNotification(receiverId: String?,userName:String?,message:String){
+        val ref=FirebaseDatabase.getInstance().reference.child("Tokens")
+        val query=ref.orderByChild("uid").startAt(receiverId).endAt(receiverId+"\ufaff")
 
+        query.addValueEventListener(object :ValueEventListener{
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                for (dataSnapshot in p0.children){
+                    val token=dataSnapshot.child("token").value.toString()
+
+                    val data= Data(firebaseUser!!.uid,R.drawable.actress,"$userName:$message","New Message",userIdVisit!!)
+                    val sender= Sender(data!!,token)
+                    apiService!!.sendNotification(sender)
+                        .enqueue(object : Callback<MyResponse> {
+                            override fun onFailure(call: Call<MyResponse>, t: Throwable) {
+
+                            }
+
+                            override fun onResponse(
+                                call: Call<MyResponse>,
+                                response: Response<MyResponse>
+                            ) {
+                                if (response.code()==200){
+                                    if (response.body()!!.success!=1){
+                                        Toast.makeText(this@MessageActivity,"failed,nothing happened",Toast.LENGTH_LONG).show()
+                                    }
+                                }
+                            }
+
+                        })
+                }
+
+            }
+
+        })
+    }
    private fun retrieveMessage(senderId: String, receiverId: String?, receiverImageUrl: String?) {
         chatList=ArrayList()
         val reference=FirebaseDatabase.getInstance().reference.child("Chats")
@@ -206,7 +290,41 @@ class MessageActivity : AppCompatActivity() {
                     ref.child("Chats").child(messageId!!).setValue(messageHashMap).addOnCompleteListener { task ->
                         if (task.isSuccessful){
                             progressBar.dismiss()
+                            val reference=FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser!!.uid)
+                            reference.addValueEventListener(object :ValueEventListener{
+                                override fun onCancelled(p0: DatabaseError) {
 
+
+                                }
+
+                                override fun onDataChange(p0: DataSnapshot) {
+                                    val user=p0.child("userName").value.toString()
+                                    var status="offline"
+                                    if (notify){
+                                        val userrReference =
+                                            FirebaseDatabase.getInstance().reference.child("Users").child(userIdVisit!!)
+                                        userrReference.addValueEventListener(object : ValueEventListener {
+                                            override fun onDataChange(snapshot: DataSnapshot) {
+                                                status = snapshot.child("status").value.toString()
+                                                if (status == "offline") {
+
+                                                    sendNotification(userIdVisit,user,"sent you an image.")
+                                                }
+                                            }
+
+                                            override fun onCancelled(error: DatabaseError) {
+                                                TODO("Not yet implemented")
+                                            }
+
+                                        })
+
+
+
+                                    }
+                                    notify=false
+                                }
+
+                            })
 
                         }
                     }
@@ -236,10 +354,27 @@ class MessageActivity : AppCompatActivity() {
 
         })
     }
+    private fun updateStatus(status:String){
+        val firebaseUser=FirebaseAuth.getInstance().currentUser
+        val ref= FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser!!.uid)
+        val hashmap=HashMap<String,Any>()
+        hashmap["status"]=status
+        ref!!.updateChildren(hashmap)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        updateStatus("online")
+    }
+    override fun onResume() {
+        super.onResume()
+        updateStatus("online")
+    }
 
     override fun onPause() {
         super.onPause()
-
+        updateStatus("offline")
         reference!!.removeEventListener(seenListner!!)
     }
+
 }
