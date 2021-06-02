@@ -39,6 +39,7 @@ class ChatFragment : Fragment() {
        chatRecyclerView!!.layoutManager= LinearLayoutManager(context)
 
         firebaseUser= FirebaseAuth.getInstance().currentUser
+        //reference to retrive people with whom user has chat
         val ref= FirebaseDatabase.getInstance().reference.child("newChatList").child(firebaseUser!!.uid)
         ref!!.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
@@ -60,14 +61,7 @@ class ChatFragment : Fragment() {
             }
 
         })
-       /* val user1 = ChatList("userid.toString()", "user_name","https://firebasestorage.googleapis.com/v0/b/meet-up-a1d6f.appspot.com/o/white.jpg?alt=media&token=3c7d74b5-9404-49d8-a8dd-803da696318b","  ","offline")
-        val user3 = ChatList("userid.toString()", "user_name","https://firebasestorage.googleapis.com/v0/b/meet-up-a1d6f.appspot.com/o/white.jpg?alt=media&token=3c7d74b5-9404-49d8-a8dd-803da696318b","  ","offline")
-        val user2 = ChatList("userid.toString()", "user_name","https://firebasestorage.googleapis.com/v0/b/meet-up-a1d6f.appspot.com/o/white.jpg?alt=media&token=3c7d74b5-9404-49d8-a8dd-803da696318b","  ","offline")
-        mUsers.add(user1)
-        mUsers.add(user2)
-        mUsers.add(user3)
-        chatListAdapter= ChatListAdapter(context!!,(mUsers as ArrayList<ChatList>),true)
-        chatRecyclerView!!.adapter=chatListAdapter*/
+
         return view
     }
     private fun retrieveChatList(){

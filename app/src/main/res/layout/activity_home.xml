@@ -34,9 +34,9 @@
                     android:id="@+id/txtMainUserName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="User Name"
+                    android:text=" "
                     android:textSize="18sp"
-                    android:layout_marginLeft="26dp"
+                    android:layout_marginStart="26dp"
                     android:textColor="#ffffff"
                     android:textStyle="bold"/>
 

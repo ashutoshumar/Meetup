@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.widget.ImageView
+import android.widget.TextView
 import com.ashutosh.meetup.R
 import com.ashutosh.meetup.databinding.ActivityHomeBinding
 import com.ashutosh.meetup.databinding.ActivityInterestBinding
@@ -13,19 +15,28 @@ import com.ashutosh.meetup.fragment.HomeFragment
 import com.ashutosh.meetup.fragment.SettingFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.messaging.FirebaseMessaging
+import com.squareup.picasso.Picasso
 
 class HomeActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityHomeBinding
     private var previousMenuItem: MenuItem?=null
     private lateinit var navigationView:BottomNavigationView
+    private lateinit var imgProfileHome:ImageView
+    private lateinit var txtMainUserName:TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding= ActivityHomeBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-           navigationView=findViewById(R.id.navigationView)
+        setContentView(R.layout.activity_home)
+        navigationView=findViewById(R.id.navigationView)
+        imgProfileHome=findViewById(R.id.imgProfileHome)
+        txtMainUserName=findViewById(R.id.txtMainUserName)
+
+        //function call to open home fragment
         openHome()
+        //below codes are for generating tokens
         val user = FirebaseAuth.getInstance().currentUser
         if (user != null) {
             FirebaseMessaging.getInstance().token.addOnCompleteListener { Task ->
@@ -62,13 +73,34 @@ class HomeActivity : AppCompatActivity() {
                 }
             }
         }
+        //for loading name and images
+        val ref=FirebaseDatabase.getInstance().reference.child("Users").child(user!!.uid)
+        ref.addValueEventListener(object :ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists())
+                {
+                    val username=snapshot.child("userName").value.toString()
+                    val pic=snapshot.child("picture").value.toString()
+                    txtMainUserName.text=username
+                    Picasso.get().load(pic).placeholder(R.drawable.white).into(imgProfileHome)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        })
+        //below codes are for buttom nav view
        navigationView.setOnNavigationItemSelectedListener {
+           //to mark selected fragment
             if(previousMenuItem!=null){
                 previousMenuItem?.isChecked=false
             }
             it.isCheckable=true
             it.isChecked=true
             previousMenuItem=it
+           //for traversing the fragments
             when(it.itemId){
                 R.id.menuHomepage->{
                     supportFragmentManager.beginTransaction()
@@ -100,6 +132,7 @@ class HomeActivity : AppCompatActivity() {
         transection.commit()
 
     }
+    //handeling back presses
     override fun onBackPressed() {
 
         val frag=supportFragmentManager.findFragmentById(R.id.mainFrame)
@@ -111,6 +144,7 @@ class HomeActivity : AppCompatActivity() {
             else-> super.onBackPressed()
         }
     }
+    //updating user online offline status
 
     private fun updateStatus(status:String){
         val firebaseUser=FirebaseAuth.getInstance().currentUser

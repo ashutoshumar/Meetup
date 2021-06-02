@@ -74,19 +74,11 @@
                 android:background="@drawable/ic_baseline_attachment_24"
 
                 />
-            <ImageView
-                android:id="@+id/imgMessageCameraImage"
-                android:layout_width="0dp"
-                android:layout_weight=".5"
-                android:layout_height="20dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8dp"
-                android:background="@drawable/ic_baseline_camera_alt_24"
 
                 />
             <EditText
                 android:layout_width="0dp"
-                android:layout_weight="4.5"
+                android:layout_weight="5"
                 android:layout_height="wrap_content"
                 android:hint="  type message..."
                 android:background="@drawable/remove_underline_of_edit_text"

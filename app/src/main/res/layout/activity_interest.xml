@@ -31,7 +31,7 @@
                  app:cardCornerRadius="60dp">
              <ImageView
                  android:id="@+id/imgProfile"
-                 android:src="@drawable/onboardfirstpic"
+                 android:src="@drawable/white"
                  android:layout_width="match_parent"
                  android:layout_height="match_parent"
                  android:scaleType="centerCrop"

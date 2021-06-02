@@ -28,19 +28,7 @@ import com.google.firebase.storage.UploadTask
 import com.squareup.picasso.Picasso
 
 class InterestActivity : AppCompatActivity() {
-    private lateinit var profile_pic: ImageView
-    private lateinit var cardView2: CardView
-    private lateinit var cardView3: CardView
-    private lateinit var cardView4: CardView
-    private lateinit var cardView5: CardView
-    private lateinit var cardView6: CardView
-    private lateinit var cardView7: CardView
-    private lateinit var cardView8: CardView
-    private lateinit var cardView9: CardView
-    private lateinit var cardView10: CardView
-    private lateinit var cardView11: CardView
-    private lateinit var cardView12: CardView
-    private lateinit var cardView13: CardView
+
     private lateinit var buttonSheetContentAdapter: BottomSheetContentAdaptor
     private val bottom_sheet_list= arrayListOf<BottomSheetContent>()
     private lateinit var txtName:TextView
@@ -53,24 +41,13 @@ class InterestActivity : AppCompatActivity() {
     private var imageUrl: Uri?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //trying view binding
         binding= ActivityInterestBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        profile_pic=findViewById(R.id.imgProfile)
         txtName=findViewById(R.id.txtName)
-        cardView2=findViewById(R.id.cardView2)
-        cardView3=findViewById(R.id.cardView3)
-        cardView4=findViewById(R.id.cardView4)
-        cardView5=findViewById(R.id.cardView5)
-        cardView6=findViewById(R.id.cardView6)
-        cardView7=findViewById(R.id.cardView7)
-        cardView8=findViewById(R.id.cardView8)
-        cardView9=findViewById(R.id.cardView9)
-        cardView10=findViewById(R.id.cardView10)
-        cardView11=findViewById(R.id.cardView11)
-        cardView12=findViewById(R.id.cardView12)
-        cardView13=findViewById(R.id.cardView13)
         mAuth= FirebaseAuth.getInstance()
         userId=mAuth.currentUser!!.uid
+        //creating database reference for displaying name and profile pic
         mDatabaseReference=FirebaseDatabase.getInstance().reference.child("Users").child(userId)
         mstorageReference=FirebaseStorage.getInstance().reference.child("userImage")
         mDatabaseReference.addValueEventListener(object :ValueEventListener{
@@ -80,7 +57,7 @@ class InterestActivity : AppCompatActivity() {
                     val username=snapshot.child("userName").value.toString()
                     val pic=snapshot.child("picture").value.toString()
                     txtName.text=username
-                    Picasso.get().load(pic).placeholder(R.drawable.actor).into(profile_pic)
+                    Picasso.get().load(pic).placeholder(R.drawable.white).into(binding.imgProfile)
                 }
             }
 
@@ -89,11 +66,12 @@ class InterestActivity : AppCompatActivity() {
             }
 
         })
-        profile_pic.setOnClickListener {
+        binding.imgProfile.setOnClickListener {
+            //funftion to pic image from gallery
             pickImage()
         }
 
-        cardView2.setOnClickListener {
+        binding.cardView2.setOnClickListener {
             val bottomSheetDialog=BottomSheetDialog(
                 this,R.style.BottomSheetDialogTheme
             )
@@ -112,8 +90,9 @@ class InterestActivity : AppCompatActivity() {
             buttonSheetContentAdapter= BottomSheetContentAdaptor(this,bottom_sheet_list)
             recyclerView.adapter=buttonSheetContentAdapter
             recyclerView.layoutManager=LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
+
         }
-        cardView3.setOnClickListener {
+        binding.cardView3.setOnClickListener {
             val bottomSheetDialog=BottomSheetDialog(
                     this,R.style.BottomSheetDialogTheme
             )
@@ -133,7 +112,7 @@ class InterestActivity : AppCompatActivity() {
             recyclerView.adapter=buttonSheetContentAdapter
             recyclerView.layoutManager=LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
         }
-        cardView4.setOnClickListener {
+        binding.cardView4.setOnClickListener {
             val bottomSheetDialog=BottomSheetDialog(
                     this,R.style.BottomSheetDialogTheme
             )
@@ -151,7 +130,7 @@ class InterestActivity : AppCompatActivity() {
             recyclerView.adapter=buttonSheetContentAdapter
             recyclerView.layoutManager=LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
         }
-        cardView5.setOnClickListener {
+        binding.cardView5.setOnClickListener {
             val bottomSheetDialog=BottomSheetDialog(
                     this,R.style.BottomSheetDialogTheme
             )
@@ -171,7 +150,7 @@ class InterestActivity : AppCompatActivity() {
             recyclerView.adapter=buttonSheetContentAdapter
             recyclerView.layoutManager=LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
         }
-        cardView6.setOnClickListener {
+        binding.cardView6.setOnClickListener {
             val bottomSheetDialog=BottomSheetDialog(
                 this,R.style.BottomSheetDialogTheme
             )
@@ -191,7 +170,7 @@ class InterestActivity : AppCompatActivity() {
             recyclerView.adapter=buttonSheetContentAdapter
             recyclerView.layoutManager=LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
         }
-        cardView7.setOnClickListener {
+        binding.cardView7.setOnClickListener {
             val bottomSheetDialog=BottomSheetDialog(
                 this,R.style.BottomSheetDialogTheme
             )
@@ -211,7 +190,7 @@ class InterestActivity : AppCompatActivity() {
             recyclerView.adapter=buttonSheetContentAdapter
             recyclerView.layoutManager=LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
         }
-        cardView8.setOnClickListener {
+        binding.cardView8.setOnClickListener {
             val bottomSheetDialog=BottomSheetDialog(
                 this,R.style.BottomSheetDialogTheme
             )
@@ -233,7 +212,7 @@ class InterestActivity : AppCompatActivity() {
             recyclerView.adapter=buttonSheetContentAdapter
             recyclerView.layoutManager=LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
         }
-        cardView9.setOnClickListener {
+        binding.cardView9.setOnClickListener {
             val bottomSheetDialog=BottomSheetDialog(
                 this,R.style.BottomSheetDialogTheme
             )
@@ -253,7 +232,7 @@ class InterestActivity : AppCompatActivity() {
             recyclerView.adapter=buttonSheetContentAdapter
             recyclerView.layoutManager=LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
         }
-        cardView10.setOnClickListener {
+        binding.cardView10.setOnClickListener {
             val bottomSheetDialog=BottomSheetDialog(
                 this,R.style.BottomSheetDialogTheme
             )
@@ -273,7 +252,7 @@ class InterestActivity : AppCompatActivity() {
             recyclerView.adapter=buttonSheetContentAdapter
             recyclerView.layoutManager=LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
         }
-        cardView11.setOnClickListener {
+        binding.cardView11.setOnClickListener {
             val bottomSheetDialog=BottomSheetDialog(
                 this,R.style.BottomSheetDialogTheme
             )
@@ -293,7 +272,7 @@ class InterestActivity : AppCompatActivity() {
             recyclerView.adapter=buttonSheetContentAdapter
             recyclerView.layoutManager=LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
         }
-        cardView12.setOnClickListener {
+        binding.cardView12.setOnClickListener {
             val bottomSheetDialog=BottomSheetDialog(
                 this,R.style.BottomSheetDialogTheme
             )
@@ -313,7 +292,7 @@ class InterestActivity : AppCompatActivity() {
             recyclerView.adapter=buttonSheetContentAdapter
             recyclerView.layoutManager=LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
         }
-        cardView13.setOnClickListener {
+        binding.cardView13.setOnClickListener {
             val bottomSheetDialog=BottomSheetDialog(
                 this,R.style.BottomSheetDialogTheme
             )
@@ -338,12 +317,15 @@ class InterestActivity : AppCompatActivity() {
            finish()
        }
     }
+
+//fun to pick image
     private fun pickImage() {
         val intent= Intent()
         intent.type="image/*"
         intent.action= Intent.ACTION_GET_CONTENT
         startActivityForResult(intent,requestCODE)
     }
+    //fun to return result of aboue intent
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode==requestCODE&&resultCode== Activity.RESULT_OK&&data!!.data!=null){
@@ -352,6 +334,7 @@ class InterestActivity : AppCompatActivity() {
             uploadImageToDatabase()
         }
     }
+    //fun to upload image in database
     private fun uploadImageToDatabase() {
         val progressBar= ProgressDialog(this)
         progressBar.setMessage("image is uploading,please wait.....")

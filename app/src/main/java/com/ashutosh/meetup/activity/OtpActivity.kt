@@ -51,6 +51,7 @@ class OtpActivity : AppCompatActivity() {
 
         }
     }
+    // to handle verivafication code if  code is sent auto fill
     private val mCallbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks =
             object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                 override fun onVerificationCompleted(phoneAuthCredential: PhoneAuthCredential) {
@@ -69,7 +70,7 @@ class OtpActivity : AppCompatActivity() {
                     mVerificationId = s
                 }
             }
-
+     //function to send otp
     private fun sendVerificationCode(mobile: String) {
         @Suppress("DEPRECATION")
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
@@ -80,11 +81,12 @@ class OtpActivity : AppCompatActivity() {
                 mCallbacks
         )
     }
+    //fun to veryfy otp
     private fun verifyVerificationCode(code: String) {
         val credential = PhoneAuthProvider.getCredential(mVerificationId!!, code)
         signInWithPhoneAuthCredential(credential)
     }
-
+    //signing in
     private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
         val progressDialog = ProgressDialog(this)
         progressDialog.setTitle("MEET UP")
@@ -117,7 +119,7 @@ class OtpActivity : AppCompatActivity() {
                     }
                 }
     }
-
+  //check if user already exists
     private fun status(progress: ProgressDialog) {
         val number = intent.getStringExtra("mobileNumber")!!.toString()
         val uid = FirebaseAuth.getInstance().currentUser!!.uid

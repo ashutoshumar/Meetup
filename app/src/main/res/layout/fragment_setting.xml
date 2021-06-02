@@ -1,14 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragment.SettingFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/etUserName_set"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginTop="20dp"
+        android:hint="@string/name">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-</FrameLayout>
+    <Button
+        android:id="@+id/btnUpdate1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:text="Update"
+        android:textSize="18sp"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/button"
+        android:layout_below="@id/etUserName_set"
+        />
+
+
+
+    <Button
+        android:id="@+id/btnmoresetting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button"
+        android:text="Wants To Edit Interest"
+        android:layout_below="@id/btnUpdate1"
+        android:layout_marginTop="15dp"
+        android:layout_marginHorizontal="30dp"
+        android:layout_centerHorizontal="true"
+        />
+    <Button
+        android:id="@+id/btnlogout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button"
+        android:text="log out"
+        android:layout_below="@id/btnmoresetting"
+        android:layout_marginTop="15dp"
+        android:layout_marginHorizontal="30dp"
+        android:layout_centerHorizontal="true"
+        />
+
+</RelativeLayout>

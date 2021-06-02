@@ -31,25 +31,27 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class MessageActivity : AppCompatActivity() {
-    var userIdVisit:String?=""
+    //tried different method of initilazition
+    private var userIdVisit:String?=""
     lateinit var imgMessageProfileImage:ImageView
     lateinit var txtMessageUserName:TextView
     lateinit var imgMessageSend:ImageView
     lateinit var imgMessageAttachImage:ImageView
     lateinit var etMessageText:EditText
-    var firebaseUser: FirebaseUser?=null
-    var chatsAdapter: ChatAdaptor?=null
-    var chatList= arrayListOf<Chat>()
+    private var firebaseUser: FirebaseUser?=null
+    private var chatsAdapter: ChatAdaptor?=null
+    private var chatList= arrayListOf<Chat>()
     lateinit var messageRecyclerView: RecyclerView
-    var reference: DatabaseReference?=null
-    var notify=false
-    var apiService: ApiService?=null
+    private var reference: DatabaseReference?=null
+    private var notify=false
+    private var apiService: ApiService?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_message)
         val messageToolbar: Toolbar =findViewById(R.id.messageToolbar)
         setSupportActionBar(messageToolbar)
         supportActionBar!!.title=""
+        //setting up back arrow () in toolbar
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         messageToolbar.setNavigationOnClickListener {
             val intent= Intent(this@MessageActivity,HomeActivity::class.java)
@@ -67,11 +69,11 @@ class MessageActivity : AppCompatActivity() {
         imgMessageAttachImage=findViewById(R.id.imgMessageAttachImage)
         messageRecyclerView=findViewById(R.id.messageRecyclerView)
         imgMessageSend=findViewById(R.id.imgMessageSend)
-
         messageRecyclerView.setHasFixedSize(true)
         var linearLayoutManager= LinearLayoutManager(applicationContext)
         linearLayoutManager.stackFromEnd=true
         messageRecyclerView.layoutManager=linearLayoutManager
+        //creating reference to database for displayin name ,pic and old messages
         reference= FirebaseDatabase.getInstance().reference.child("Users").child(userIdVisit!!)
         reference!!.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
@@ -79,10 +81,17 @@ class MessageActivity : AppCompatActivity() {
             }
 
             override fun onDataChange(p0: DataSnapshot) {
-                txtMessageUserName.text=p0.child("userName").value.toString()
-                Picasso.get().load(p0.child("picture").value.toString()).into(imgMessageProfileImage)
-
-                retrieveMessage(firebaseUser!!.uid,userIdVisit!!,p0.child("picture").value.toString())
+                if(p0.exists()) {
+                    txtMessageUserName.text = p0.child("userName").value.toString()
+                    Picasso.get().load(p0.child("picture").value.toString())
+                        .into(imgMessageProfileImage)
+                    //function to retrive old msg
+                    retrieveMessage(
+                        firebaseUser!!.uid,
+                        userIdVisit!!,
+                        p0.child("picture").value.toString()
+                    )
+                }
             }
 
         })
@@ -93,6 +102,7 @@ class MessageActivity : AppCompatActivity() {
                 Toast.makeText(this@MessageActivity,"Please Write A message....", Toast.LENGTH_LONG).show()
 
             }else{
+                //function to send msg
                sendMessageToUser(firebaseUser!!.uid,userIdVisit,message)
             }
             etMessageText.setText("")
@@ -104,6 +114,7 @@ class MessageActivity : AppCompatActivity() {
             intent.action=Intent.ACTION_GET_CONTENT
             startActivityForResult(Intent.createChooser(intent,"pick image"),438)
         }
+        //function to see msg seen or not
         seenMessage(userIdVisit!!)
     }
     private fun sendMessageToUser(senderId: String, receiverId: String?, message: String) {
@@ -120,6 +131,7 @@ class MessageActivity : AppCompatActivity() {
         reference.child("Chats").child(messageKey!!).setValue(messageHashMap).addOnCompleteListener {
                 task ->
             if (task.isSuccessful){
+                //creating reference to save receiver id for displaying all the people user hat chat with
                 val chatListReference=FirebaseDatabase.getInstance().reference.child("newChatList").child(firebaseUser!!.uid).child(userIdVisit!!)
 
                 chatListReference.addListenerForSingleValueEvent(object :ValueEventListener{
@@ -144,10 +156,7 @@ class MessageActivity : AppCompatActivity() {
 
         }
         //implement the push notifications using fcm
-
-        // chatListReference.child("id").setValue(firebaseUser!!.uid)
-
-        val userReference=FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser!!.uid)
+               val userReference=FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser!!.uid)
         userReference.addValueEventListener(object :ValueEventListener{
             override fun onCancelled(p0: DatabaseError) {
 
@@ -155,17 +164,21 @@ class MessageActivity : AppCompatActivity() {
             }
 
             override fun onDataChange(p0: DataSnapshot) {
-                val user=p0.child("userName").value.toString()
-                var status="offline"
-                if (notify){
+                if (p0.exists()){
+                val user = p0.child("userName").value.toString()
+                var status = "offline"
+                if (notify) {
+                    //creating data base reference to check if receiver is online or not if offline send notification.
                     val userrReference =
                         FirebaseDatabase.getInstance().reference.child("Users").child(receiverId!!)
                     userrReference.addValueEventListener(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
-                            status = snapshot.child("status").value.toString()
-                            if (status == "offline") {
-
-                                sendNotification(receiverId, user, message)
+                            if (snapshot.exists()) {
+                                status = snapshot.child("status").value.toString()
+                                if (status == "offline") {
+                                    //function to send notification
+                                    sendNotification(receiverId, user, message)
+                                }
                             }
                         }
 
@@ -177,7 +190,9 @@ class MessageActivity : AppCompatActivity() {
 
 
                 }
-                notify=false
+                    notify=false
+            }
+
             }
 
         })
@@ -195,11 +210,19 @@ class MessageActivity : AppCompatActivity() {
             }
 
             override fun onDataChange(p0: DataSnapshot) {
-                for (dataSnapshot in p0.children){
-                    val token=dataSnapshot.child("token").value.toString()
-
-                    val data= Data(firebaseUser!!.uid,R.drawable.actress,"$userName:$message","New Message",userIdVisit!!)
-                    val sender= Sender(data!!,token)
+                for (dataSnapshot in p0.children) {
+                    val token = dataSnapshot.child("token").value.toString()
+                    //creating data to be send
+                    val data = Data(
+                        firebaseUser!!.uid,
+                        R.drawable.actress,
+                        "$userName:$message",
+                        "New Message",
+                        userIdVisit!!
+                    )
+                    //setting data and token together
+                    val sender = Sender(data!!, token)
+                    //making api call for notification
                     apiService!!.sendNotification(sender)
                         .enqueue(object : Callback<MyResponse> {
                             override fun onFailure(call: Call<MyResponse>, t: Throwable) {
@@ -210,20 +233,26 @@ class MessageActivity : AppCompatActivity() {
                                 call: Call<MyResponse>,
                                 response: Response<MyResponse>
                             ) {
-                                if (response.code()==200){
-                                    if (response.body()!!.success!=1){
-                                        Toast.makeText(this@MessageActivity,"failed,nothing happened",Toast.LENGTH_LONG).show()
+                                if (response.code() == 200) {
+                                    if (response.body()!!.success != 1) {
+                                        Toast.makeText(
+                                            this@MessageActivity,
+                                            "failed,nothing happened",
+                                            Toast.LENGTH_LONG
+                                        ).show()
                                     }
                                 }
                             }
 
                         })
+
                 }
 
             }
 
         })
     }
+    //function to retrive old msg
    private fun retrieveMessage(senderId: String, receiverId: String?, receiverImageUrl: String?) {
         chatList=ArrayList()
         val reference=FirebaseDatabase.getInstance().reference.child("Chats")
@@ -248,6 +277,7 @@ class MessageActivity : AppCompatActivity() {
         })
 
     }
+    //to handle result of image sending task
    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -290,6 +320,7 @@ class MessageActivity : AppCompatActivity() {
                     ref.child("Chats").child(messageId!!).setValue(messageHashMap).addOnCompleteListener { task ->
                         if (task.isSuccessful){
                             progressBar.dismiss()
+                            //for firebase fcm
                             val reference=FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser!!.uid)
                             reference.addValueEventListener(object :ValueEventListener{
                                 override fun onCancelled(p0: DatabaseError) {
@@ -298,17 +329,24 @@ class MessageActivity : AppCompatActivity() {
                                 }
 
                                 override fun onDataChange(p0: DataSnapshot) {
-                                    val user=p0.child("userName").value.toString()
-                                    var status="offline"
-                                    if (notify){
+                                   if (p0.exists()){
+                                    val user = p0.child("userName").value.toString()
+                                    var status = "offline"
+                                    if (notify) {
                                         val userrReference =
-                                            FirebaseDatabase.getInstance().reference.child("Users").child(userIdVisit!!)
-                                        userrReference.addValueEventListener(object : ValueEventListener {
+                                            FirebaseDatabase.getInstance().reference.child("Users")
+                                                .child(userIdVisit!!)
+                                        userrReference.addValueEventListener(object :
+                                            ValueEventListener {
                                             override fun onDataChange(snapshot: DataSnapshot) {
                                                 status = snapshot.child("status").value.toString()
                                                 if (status == "offline") {
 
-                                                    sendNotification(userIdVisit,user,"sent you an image.")
+                                                    sendNotification(
+                                                        userIdVisit,
+                                                        user,
+                                                        "sent you an image."
+                                                    )
                                                 }
                                             }
 
@@ -319,9 +357,9 @@ class MessageActivity : AppCompatActivity() {
                                         })
 
 
-
                                     }
-                                    notify=false
+                                    notify = false
+                                }
                                 }
 
                             })
@@ -333,6 +371,7 @@ class MessageActivity : AppCompatActivity() {
             }
         }
     }
+    //function to check msg seen or not
    var seenListner:ValueEventListener?=null
     private fun seenMessage(userId:String){
         val reference=FirebaseDatabase.getInstance().reference.child("Chats")
@@ -354,6 +393,7 @@ class MessageActivity : AppCompatActivity() {
 
         })
     }
+    //function to update status of user
     private fun updateStatus(status:String){
         val firebaseUser=FirebaseAuth.getInstance().currentUser
         val ref= FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser!!.uid)

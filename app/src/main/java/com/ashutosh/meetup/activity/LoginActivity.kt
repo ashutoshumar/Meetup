@@ -34,6 +34,7 @@ class LoginActivity : AppCompatActivity() {
             {
                 btnNext.visibility = View.GONE
                 loginProgressBar.visibility = View.VISIBLE
+                //sending for otp verification
                 val intent= Intent(this, OtpActivity::class.java)
                 intent.putExtra("mobileNumber", number)
                 startActivity(intent)
@@ -47,19 +48,6 @@ class LoginActivity : AppCompatActivity() {
         a.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(a)
     }
-    public override fun onStart() {
-        super.onStart()
-        // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = mAuth.currentUser
-        updateUI(currentUser)
-    }
-    fun updateUI(currentUser: FirebaseUser?){
-        if(currentUser!=null){
 
-            Toast.makeText(this@LoginActivity,"Logged In", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(this@LoginActivity,InterestActivity::class.java))
-            finish()
-        }
-    }
 
 }

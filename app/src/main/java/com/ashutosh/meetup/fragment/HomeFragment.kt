@@ -46,6 +46,7 @@ class HomeFragment : Fragment() {
         val filterItems = listOf("None", "Sports", "Entrepreneur","Political Party","Politician","Movies","Singer","Actor","Actress","Hobbies","Destination","Career","Technology")
         val filterAdapter = ArrayAdapter(activity as Context,R.layout.list_item,filterItems)
         actxttFilter.setAdapter(filterAdapter)
+        //code to filter interest
         actxttFilter.setOnItemClickListener { parent, view, position, id ->
             val actxtFilter=parent.getItemAtPosition(position).toString()
 
@@ -398,6 +399,7 @@ class HomeFragment : Fragment() {
         return view
 
     }
+    //function to retrive filtered users
     fun retrieveUsers(interestType:String,interest:String)
     {
         var firebaseUserId=FirebaseAuth.getInstance().currentUser!!.uid
